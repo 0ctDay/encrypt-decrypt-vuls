@@ -1,0 +1,40 @@
+version: '3'
+services:
+  mysql:
+    image: mysql:latest
+    environment:
+      MYSQL_ROOT_PASSWORD: "123456"
+      MYSQL_DATABASE: "springboot-vue"
+    networks:
+      - mynetwork
+    volumes:
+      - ./library.sql:/docker-entrypoint-initdb.d/library.sql
+  redis:
+    image: redis:latest
+    networks:
+      - mynetwork
+  nacos:
+    image: nacos/nacos-server:2.0.2
+    networks:
+      - mynetwork
+  library:
+    image: library
+    environment:
+      MYSQL_HOST: mysql
+      REDIS_HOST: redis
+      NACOS_HOST: nacos
+    networks:
+      - mynetwork
+
+  gateway:
+      image: gateway
+      environment:
+        MYSQL_HOST: mysql
+        REDIS_HOST: redis
+        NACOS_HOST: nacos
+      networks:
+        - mynetwork
+      ports:
+        - 9000:9000
+networks:
+  mynetwork:
