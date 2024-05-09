@@ -1,5 +1,3 @@
-services:
-  - docker:dind
 variables:
   GIT_REPO_URL: "http://192.168.202.220:8090/root/library.git"
 
