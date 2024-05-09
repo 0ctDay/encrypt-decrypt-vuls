@@ -1,12 +1,8 @@
 stages:
-  - clone
   - build
   - deploy
 
-clone:
-  stage: clone
-  script:
-    - git clone http://192.168.202.220:8090/root/library.git
+
 
 build:
   stage: build
