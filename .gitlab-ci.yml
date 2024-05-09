@@ -1,6 +1,3 @@
-variables:
-  GIT_REPO_URL: "http://192.168.202.220:8090/root/library.git"
-
 stages:
   - clone
   - build
@@ -9,7 +6,7 @@ stages:
 clone:
   stage: clone
   script:
-    - git clone $GIT_REPO_URL
+    - git clone http://192.168.202.220:8090/root/library.git
 
 build:
   stage: build
