@@ -1,5 +1,5 @@
 server:
-  port: 9090
+  port: 8080
 
 spring:
   datasource:
@@ -10,7 +10,7 @@ spring:
 
 
   application:
-    name: libirary-service
+    name: library-service
 
   cloud:
     nacos:

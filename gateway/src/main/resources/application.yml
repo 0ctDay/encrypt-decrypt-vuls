@@ -1,5 +1,5 @@
 server:
-  port: 9000
+  port: 8080
 
 spring:
   application:
@@ -11,7 +11,7 @@ spring:
     gateway:
       routes:
         - id: demo-one
-          uri: lb://libirary-service
+          uri: lb://library-service
           predicates:
             - Path=/**
 #          predicates:

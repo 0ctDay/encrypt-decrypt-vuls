@@ -17,17 +17,32 @@ services:
     image: nacos/nacos-server:2.0.2
     networks:
       - mynetwork
+    environment:
+      MODE: "standalone"
+
+
   library:
-    image: library
+    image: openjdk:8-jdk-alpine
+    volumes:
+      - ./library/target/library-0.0.1-SNAPSHOT.jar:/app/library-0.0.1-SNAPSHOT.jar
     environment:
       MYSQL_HOST: mysql
       REDIS_HOST: redis
       NACOS_HOST: nacos
     networks:
       - mynetwork
+    ports:
+      - 9200:8080
+    depends_on:
+      - nacos
+      - mysql
+      - redis
+    command:
+      - java -jar /app/library-0.0.1-SNAPSHOT.jar
+
 
   gateway:
-      image: gateway
+      image: openjdk:8-jdk-alpine
       environment:
         MYSQL_HOST: mysql
         REDIS_HOST: redis
@@ -35,6 +50,16 @@ services:
       networks:
         - mynetwork
       ports:
-        - 9000:9000
+        - 9100:8080
+      depends_on:
+        - nacos
+        - mysql
+        - redis
+      volumes:
+        - ./gateway/target/gateway-1.0-SNAPSHOT.jar:/app/gateway-1.0-SNAPSHOT.jar
+      command:
+        - java -jar /app/gateway-1.0-SNAPSHOT.jar
+
+
 networks:
   mynetwork:
