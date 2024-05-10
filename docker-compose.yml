@@ -29,6 +29,7 @@ services:
       MYSQL_HOST: mysql
       REDIS_HOST: redis
       NACOS_HOST: nacos
+    restart: on-failure
     networks:
       - mynetwork
     ports:
@@ -45,6 +46,7 @@ services:
         MYSQL_HOST: mysql
         REDIS_HOST: redis
         NACOS_HOST: nacos
+      restart: on-failure
       networks:
         - mynetwork
       ports:
