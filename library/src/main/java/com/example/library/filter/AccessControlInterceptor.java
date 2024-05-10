@@ -17,13 +17,16 @@ public class AccessControlInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
             throws Exception {
+        if ( "OPTIONS".equals(request.getMethod())){
+            return true;
+        }
         // 获取请求中的所有 Cookie
         try {
             String token = request.getHeader("token");
             String aud = JWT.decode(token).getAudience().get(0);
             Integer userId = Integer.valueOf(aud);
 
-            if (userId != null || "OPTIONS".equals(request.getMethod())) {
+            if (userId != null) {
                 return true;
             }
         }
