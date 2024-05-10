@@ -24,7 +24,7 @@ services:
 
 
   library:
-    build: ./library
+    image: library-service
     environment:
       MYSQL_HOST: mysql
       REDIS_HOST: redis
@@ -40,7 +40,7 @@ services:
 
 
   gateway:
-      build: ./gateway
+      image: gateway-service
       environment:
         MYSQL_HOST: mysql
         REDIS_HOST: redis
