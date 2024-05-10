@@ -18,7 +18,7 @@ services:
     networks:
       - mynetwork
     ports:
-      - 8849:8848
+      - "8849:8848"
     environment:
       MODE: "standalone"
 
@@ -32,7 +32,7 @@ services:
     networks:
       - mynetwork
     ports:
-      - 9200:8080
+      - "9200:8080"
     depends_on:
       - nacos
       - mysql
@@ -48,7 +48,7 @@ services:
       networks:
         - mynetwork
       ports:
-        - 9100:8080
+        - "9100:8080"
       depends_on:
         - nacos
         - mysql
