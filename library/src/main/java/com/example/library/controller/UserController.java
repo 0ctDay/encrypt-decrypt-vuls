@@ -178,7 +178,7 @@ public class UserController {
         if(StringUtils.isNotBlank(search4)){
             wrappers.like(User::getAddress,search4);
         }
-        wrappers.like(User::getRole,2);
+        //wrappers.like(User::getRole,2);
         Page<User> userPage =userMapper.selectPage(new Page<>(pageNum,pageSize), wrappers);
         return Result.success(userPage);
     }
