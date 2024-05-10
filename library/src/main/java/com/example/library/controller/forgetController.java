@@ -17,7 +17,7 @@ import javax.servlet.http.HttpSession;
 public class forgetController {
     @Resource
     UserMapper userMapper;
-    @CrossOrigin
+    
     @PostMapping("/checkusername")
     public Result<?> checkusername(@RequestBody User user){
         User res = userMapper.selectOne(Wrappers.<User>lambdaQuery().eq(User::getUsername,user.getUsername()));
@@ -27,7 +27,7 @@ public class forgetController {
         }
         return Result.success("0");
     }
-    @CrossOrigin
+   
     @PostMapping("/sendsms")
     public Result<?> sendsms(@RequestBody User user, HttpServletRequest request){
 
@@ -41,7 +41,7 @@ public class forgetController {
         System.out.println(session.getAttribute("code"));
         return Result.success("0");
     }
-    @CrossOrigin
+   
     @GetMapping("/checksms")
     public Result<?> checksms(HttpServletRequest request){
         HttpSession session = request.getSession();
@@ -60,7 +60,7 @@ public class forgetController {
         }
 
     }
-    @CrossOrigin
+   
     @PostMapping("/resetpassword")
     public Result<?> resetpassword(@RequestBody User user){
         User res = userMapper.selectOne(Wrappers.<User>lambdaQuery().eq(User::getUsername,user.getUsername()));

@@ -34,7 +34,7 @@ public class UserController {
         userMapper.insert(user);
         return Result.success();
     }
-    @CrossOrigin
+   
     @PostMapping("/checkusername")
     public Result<?> checkusername(@RequestBody User user){
         User res = userMapper.selectOne(Wrappers.<User>lambdaQuery().eq(User::getUsername,user.getUsername()));
@@ -44,7 +44,7 @@ public class UserController {
         }
         return Result.success("0");
     }
-    @CrossOrigin
+   
     @PostMapping("/sendsms")
     public Result<?> sendsms(@RequestBody User user, HttpServletRequest request){
 
@@ -58,7 +58,7 @@ public class UserController {
         System.out.println(session.getAttribute("code"));
         return Result.success("0");
     }
-    @CrossOrigin
+   
     @GetMapping("/checksms")
     public Result<?> checksms(HttpServletRequest request){
         HttpSession session = request.getSession();
@@ -77,7 +77,7 @@ public class UserController {
         }
 
     }
-    @CrossOrigin
+   
     @PostMapping("/resetpassword")
     public Result<?> resetpassword(@RequestBody User user){
         User res = userMapper.selectOne(Wrappers.<User>lambdaQuery().eq(User::getUsername,user.getUsername()));
@@ -91,7 +91,7 @@ public class UserController {
         return Result.success();
     }
 
-    @CrossOrigin
+   
     @PostMapping("/login")
     public Result<?> login(@RequestBody User user){
 
