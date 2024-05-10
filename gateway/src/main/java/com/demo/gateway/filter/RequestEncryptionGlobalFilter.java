@@ -56,6 +56,8 @@ public class RequestEncryptionGlobalFilter implements GlobalFilter, Ordered {
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
+        //拦截OPTIONS请求
+
         //1 获取时间戳
         Long dateTimestamp = getDateTimestamp(exchange.getRequest().getHeaders());
         //2 获取RequestId

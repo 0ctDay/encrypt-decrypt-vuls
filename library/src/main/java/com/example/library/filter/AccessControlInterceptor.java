@@ -18,6 +18,7 @@ public class AccessControlInterceptor implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
             throws Exception {
         if ( "OPTIONS".equals(request.getMethod())){
+            System.out.println("接收到了OPTIONS");
             return true;
         }
         // 获取请求中的所有 Cookie
