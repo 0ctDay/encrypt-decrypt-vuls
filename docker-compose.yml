@@ -22,9 +22,7 @@ services:
 
 
   library:
-    image: openjdk:8-jdk-alpine
-    volumes:
-      - ./library/target/library-0.0.1-SNAPSHOT.jar:/app/library-0.0.1-SNAPSHOT.jar
+    image: library
     environment:
       MYSQL_HOST: mysql
       REDIS_HOST: redis
@@ -37,12 +35,10 @@ services:
       - nacos
       - mysql
       - redis
-    command:
-      - java -jar /app/library-0.0.1-SNAPSHOT.jar
 
 
   gateway:
-      image: openjdk:8-jdk-alpine
+      image: gateway
       environment:
         MYSQL_HOST: mysql
         REDIS_HOST: redis
@@ -55,10 +51,6 @@ services:
         - nacos
         - mysql
         - redis
-      volumes:
-        - ./gateway/target/gateway-1.0-SNAPSHOT.jar:/app/gateway-1.0-SNAPSHOT.jar
-      command:
-        - java -jar /app/gateway-1.0-SNAPSHOT.jar
 
 
 networks:
