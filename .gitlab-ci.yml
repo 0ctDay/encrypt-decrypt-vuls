@@ -8,8 +8,8 @@ build:
   stage: build
   script:
     - mvn clean package
-    - sudo docker build -t library ./library
-    - sudo docker build -t gateway ./gateway
+#    - sudo docker build -t library ./library
+#    - sudo docker build -t gateway ./gateway
 
 deploy:
   stage: deploy
