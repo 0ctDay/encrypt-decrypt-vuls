@@ -7,6 +7,8 @@ stages:
 build:
   stage: build
   script:
+    - sudo docker-compose down
+    - sudo docker-compose up -d nacos
     - mvn clean package
     - sudo docker build -t library-service ./library
     - sudo docker build -t gateway-service ./gateway
@@ -14,5 +16,4 @@ build:
 deploy:
   stage: deploy
   script:
-    - sudo docker-compose down
     - sudo docker-compose up -d
