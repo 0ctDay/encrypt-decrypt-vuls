@@ -48,7 +48,7 @@ public class ResponseEncryptionGlobalFilter implements GlobalFilter, Ordered {
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
-        log.debug("触发");
+        System.out.println("触发");
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
 
@@ -66,7 +66,7 @@ public class ResponseEncryptionGlobalFilter implements GlobalFilter, Ordered {
                             join.read(bytes);
                             DataBufferUtils.release(join);
 
-                            log.debug("加密前 body：{}", new String(bytes));
+                            System.out.println("加密前 body："+ new String(bytes));
 
                             byte[] encryption;
 
@@ -80,7 +80,7 @@ public class ResponseEncryptionGlobalFilter implements GlobalFilter, Ordered {
                                 log.error("数据类型不是 JSON，不加密", e);
                             }
 
-                            log.debug("加密后 body：{}", new String(encryption, StandardCharsets.UTF_8));
+                            System.out.println("加密后 body："+ new String(encryption, StandardCharsets.UTF_8));
                             HttpHeaders headers = getDelegate().getHeaders();
                             headers.setContentLength(encryption.length);
                             return exchange.getResponse().bufferFactory().wrap(encryption);

@@ -61,7 +61,7 @@ public class RequestEncryptionGlobalFilter implements GlobalFilter, Ordered {
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
         //拦截OPTIONS请求
-        log.debug("1. 获取请求头");
+        System.out.println("1. 获取请求头");
         //1 获取时间戳
         Long dateTimestamp = getDateTimestamp(exchange.getRequest().getHeaders());
         //2 获取RequestId
@@ -86,7 +86,7 @@ public class RequestEncryptionGlobalFilter implements GlobalFilter, Ordered {
         } catch (Exception e) {
             return FilterUtils.invalidUrl(exchange);
         }
-        log.debug("2. 获取请求参数: "+ JSON.toJSON(paramMap));
+        System.out.println("2. 获取请求参数: "+ JSON.toJSON(paramMap));
         //6 获取请求体,修改请求体
         ServerRequest serverRequest = ServerRequest.create(exchange, HandlerStrategies.withDefaults().messageReaders());
         Mono<String> modifiedBody = serverRequest.bodyToMono(String.class).flatMap(body -> {
@@ -96,7 +96,7 @@ public class RequestEncryptionGlobalFilter implements GlobalFilter, Ordered {
                 paramMap.put(entry.getKey(), entry.getValue());
             }
             checkSign(sign, dateTimestamp, requestId, paramMap);
-            log.debug("3. 修改请求体:"+encrypt);
+            System.out.println("3. 修改请求体:"+encrypt);
             return Mono.just(encrypt);
         });
 
@@ -120,7 +120,7 @@ public class RequestEncryptionGlobalFilter implements GlobalFilter, Ordered {
                         //验证签名
                         checkSign(outputMessage.getSign(), outputMessage.getDateTimestamp(), outputMessage.getRequestId(), outputMessage.getParamMap());
                     }
-                    log.debug("4. 完成");
+                    System.out.println("4. 完成");
                     return outputMessage.getBody();
 
                 }
