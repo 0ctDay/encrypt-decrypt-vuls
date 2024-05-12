@@ -47,6 +47,8 @@ services:
         REDIS_HOST: redis
         NACOS_HOST: nacos
       restart: on-failure
+      volumes:
+        - /tmp/logfile.log:/app/logfile.log
       networks:
         - mynetwork
       ports:
