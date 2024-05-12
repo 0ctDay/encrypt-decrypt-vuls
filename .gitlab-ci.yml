@@ -7,6 +7,7 @@ stages:
 build:
   stage: build
   script:
+    - sudo docker network create mynetwork
     - sudo docker rm -f nacos
     - sudo docker run -d --name nacos --network mynetwork -p 8849:8848 -e MODE=standalone nacos/nacos-server:2.0.2
     - mvn clean package
