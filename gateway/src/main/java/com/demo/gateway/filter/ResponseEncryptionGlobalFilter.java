@@ -1,9 +1,11 @@
 package com.demo.gateway.filter;
 
+import com.demo.gateway.annotations.LoggableGlobalFilter;
 import com.demo.gateway.utils.AESUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import lombok.extern.slf4j.Slf4j;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.reactivestreams.Publisher;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
@@ -11,6 +13,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
 import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.core.io.buffer.DataBufferUtils;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.server.reactive.ServerHttpResponseDecorator;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
@@ -27,11 +30,12 @@ import java.nio.charset.StandardCharsets;
  * @see ServerHttpResponseDecorator
  * @since 0.0.1
  */
-@Slf4j
+
 @Configuration
 @Component
 public class ResponseEncryptionGlobalFilter implements GlobalFilter, Ordered {
-    private static final String AES_SECURTY = "MTIzNDU2Nzg5MTIzNDU2Nw=="; //1234567891234567
+    private static final String AES_SECURTY = "MTIzNDU2Nzg5MTIzNDU2Nw==";//1234567891234567
+    private static final Logger log = LogManager.getLogger();
     /**
      * 加密 过滤器 优先级
      * <p>
@@ -77,7 +81,8 @@ public class ResponseEncryptionGlobalFilter implements GlobalFilter, Ordered {
                             }
 
                             log.debug("加密后 body：{}", new String(encryption, StandardCharsets.UTF_8));
-
+                            HttpHeaders headers = getDelegate().getHeaders();
+                            headers.setContentLength(encryption.length);
                             return exchange.getResponse().bufferFactory().wrap(encryption);
                         })
                 );

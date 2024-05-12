@@ -10,9 +10,11 @@
     <version>1.0-SNAPSHOT</version>
     <modules>
         <module>gateway</module>
-        <module>common</module>
-        <module>user</module>
         <module>library</module>
+
+
+<!--        <module>common</module>-->
+<!--        <module>user</module>-->
     </modules>
 
     <properties>

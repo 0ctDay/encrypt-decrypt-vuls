@@ -3,10 +3,13 @@ package com.demo.gateway.filter;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.nacos.common.utils.Md5Utils;
+import com.demo.gateway.annotations.LoggableGlobalFilter;
 import com.demo.gateway.config.FilterUtils;
 import com.demo.gateway.pojo.MyCachedBodyOutputMessage;
 import com.demo.gateway.utils.AESUtil;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
@@ -49,6 +52,7 @@ public class RequestEncryptionGlobalFilter implements GlobalFilter, Ordered {
     @Autowired
     private RedisTemplate<String, String> redisTemplate;
 
+    private static final Logger log = LogManager.getLogger();
 
     private static final String ERROR_MESSAGE = "拒绝服务";
     private static final String SIGN_ERROR_MESSAGE = "签名过期";
@@ -57,7 +61,7 @@ public class RequestEncryptionGlobalFilter implements GlobalFilter, Ordered {
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
         //拦截OPTIONS请求
-
+        log.debug("1. 获取请求头");
         //1 获取时间戳
         Long dateTimestamp = getDateTimestamp(exchange.getRequest().getHeaders());
         //2 获取RequestId
@@ -75,12 +79,14 @@ public class RequestEncryptionGlobalFilter implements GlobalFilter, Ordered {
 //            }
 //        }
         //5 修改请求参数,并获取请求参数
+
         Map<String, Object> paramMap;
         try {
             paramMap = updateRequestParam(exchange);
         } catch (Exception e) {
             return FilterUtils.invalidUrl(exchange);
         }
+        log.debug("2. 获取请求参数: "+ JSON.toJSON(paramMap));
         //6 获取请求体,修改请求体
         ServerRequest serverRequest = ServerRequest.create(exchange, HandlerStrategies.withDefaults().messageReaders());
         Mono<String> modifiedBody = serverRequest.bodyToMono(String.class).flatMap(body -> {
@@ -90,6 +96,7 @@ public class RequestEncryptionGlobalFilter implements GlobalFilter, Ordered {
                 paramMap.put(entry.getKey(), entry.getValue());
             }
             checkSign(sign, dateTimestamp, requestId, paramMap);
+            log.debug("3. 修改请求体:"+encrypt);
             return Mono.just(encrypt);
         });
 
@@ -101,12 +108,7 @@ public class RequestEncryptionGlobalFilter implements GlobalFilter, Ordered {
         headers.remove(HttpHeaders.CONTENT_LENGTH);
         //创建CachedBodyOutputMessage并且把请求param加入,初始化校验信息
         MyCachedBodyOutputMessage outputMessage = new MyCachedBodyOutputMessage(exchange, headers);
-
         outputMessage.initial(paramMap, requestId, sign, dateTimestamp);
-
-        //修改响应体
-        MyCachedBodyOutputMessage repOutputMessage = new MyCachedBodyOutputMessage(exchange, headers);
-        repOutputMessage.getBody();
 
 
         return bodyInserter.insert(outputMessage, new BodyInserterContext()).then(Mono.defer(() -> {
@@ -118,7 +120,9 @@ public class RequestEncryptionGlobalFilter implements GlobalFilter, Ordered {
                         //验证签名
                         checkSign(outputMessage.getSign(), outputMessage.getDateTimestamp(), outputMessage.getRequestId(), outputMessage.getParamMap());
                     }
+                    log.debug("4. 完成");
                     return outputMessage.getBody();
+
                 }
             };
 
