@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Configuration status="INFO">
-    <File name="File" fileName="/app/logfile.log">
+    <File name="File" fileName="/tmp/logfile.log">
         <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
     </File>
     <Loggers>

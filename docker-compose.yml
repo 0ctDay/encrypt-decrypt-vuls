@@ -48,7 +48,7 @@ services:
         NACOS_HOST: nacos
       restart: on-failure
       volumes:
-        - /tmp:/app
+        - /tmp/log:/tmp
       networks:
         - mynetwork
       ports:
