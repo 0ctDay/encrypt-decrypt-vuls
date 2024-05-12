@@ -1,0 +1,8 @@
+nacos:
+  image: nacos/nacos-server:2.0.2
+  networks:
+    - mynetwork
+  ports:
+    - "8849:8848"
+  environment:
+    MODE: "standalone"
