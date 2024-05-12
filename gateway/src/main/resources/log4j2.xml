@@ -11,5 +11,8 @@
         <Root level="info">
             <AppenderRef ref="Console"/>
         </Root>
+        <Root level="debug">
+            <AppenderRef ref="Console"/>
+        </Root>
     </Loggers>
 </Configuration>
