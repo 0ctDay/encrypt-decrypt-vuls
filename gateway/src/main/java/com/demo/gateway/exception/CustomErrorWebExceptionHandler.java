@@ -1,4 +1,4 @@
-package com.demo.gateway.config;
+package com.demo.gateway.exception;
 
 import org.springframework.boot.web.reactive.error.ErrorAttributes;
 import org.springframework.boot.web.reactive.error.ErrorWebExceptionHandler;
@@ -13,7 +13,7 @@ import reactor.core.publisher.Mono;
 public class CustomErrorWebExceptionHandler {
 
     @Bean
-    public ErrorWebExceptionHandler errorWebExceptionHandler(ErrorAttributes errorAttributes) {
+    public ErrorWebExceptionHandler errorWebExceptionHandler123(ErrorAttributes errorAttributes) {
         return (exchange, ex) -> {
             if (ex instanceof ResponseStatusException) {
                 ResponseStatusException responseStatusException = (ResponseStatusException) ex;
