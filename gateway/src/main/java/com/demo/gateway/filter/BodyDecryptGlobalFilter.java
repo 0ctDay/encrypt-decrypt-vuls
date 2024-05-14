@@ -1,9 +1,15 @@
 package com.demo.gateway.filter;
 
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+import com.demo.gateway.config.FilterUtils;
 import com.demo.gateway.utils.AESUtil;
+import com.demo.gateway.utils.CheckSign;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.sun.tools.javac.comp.Check;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.context.annotation.Configuration;
@@ -21,8 +27,10 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.io.IOException;
+import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
+import java.util.TreeMap;
 
 
 /**
@@ -47,7 +55,19 @@ public class BodyDecryptGlobalFilter implements GlobalFilter, Ordered {
 
         ServerHttpRequest request = exchange.getRequest();
 
+        CheckSign sign;
+        //获取请求参数
+        try {
+            sign = new CheckSign(updateRequestParam(exchange));
+        } catch (Exception e) {
+            return FilterUtils.invalidUrl(exchange);
+        }
+        //处理GET请求
         if (request.getMethod() == HttpMethod.GET) {
+            //验证签名
+            if(!sign.Sign(exchange)){
+                return FilterUtils.invalidUrl(exchange);
+            }
             return chain.filter(exchange);
         }
 
@@ -73,7 +93,13 @@ public class BodyDecryptGlobalFilter implements GlobalFilter, Ordered {
                         return Mono.just(buffer);
                     });
 
-
+                    JSONObject jsonObject = JSON.parseObject(decrypt);
+                    for (Map.Entry<String, Object> entry : jsonObject.entrySet()) {
+                        sign.paramMap.put(entry.getKey(), entry.getValue());
+                    }
+                    if(!sign.Sign(exchange)){
+                        return FilterUtils.invalidUrl(exchange);
+                    }
 
                     ServerHttpRequest mutatedRequest = new ServerHttpRequestDecorator(request) {
                         @Override
@@ -96,6 +122,24 @@ public class BodyDecryptGlobalFilter implements GlobalFilter, Ordered {
                 });
 
 
+    }
+    private Map<String, Object> updateRequestParam(ServerWebExchange exchange) throws NoSuchFieldException, IllegalAccessException {
+        ServerHttpRequest request = exchange.getRequest();
+        URI uri = request.getURI();
+        String query = uri.getQuery();
+        if (StringUtils.isNotBlank(query) && query.contains("param")) {
+            return getParamMap(query);
+        }
+        return new TreeMap<>();
+    }
+    private Map<String, Object> getParamMap(String param) {
+        Map<String, Object> map = new TreeMap<>();
+        String[] split = param.split("&");
+        for (String str : split) {
+            String[] params = str.split("=");
+            map.put(params[0], params[1]);
+        }
+        return map;
     }
 
 }
