@@ -53,9 +53,7 @@ public class BodyDecryptGlobalFilter implements GlobalFilter, Ordered {
                     dataBuffer.read(bytes);
                     DataBufferUtils.release(dataBuffer);
 
-                    if ("GET".equals(request.getMethod())) {
-                        return chain.filter(exchange);
-                    }
+
 
                     String bodyString = new String(bytes);
                     // 这里可以对bodyString进行任何你需要的操作，比如日志记录或修改内容
@@ -74,6 +72,9 @@ public class BodyDecryptGlobalFilter implements GlobalFilter, Ordered {
                     ServerHttpRequest mutatedRequest = new ServerHttpRequestDecorator(request) {
                         @Override
                         public Flux<DataBuffer> getBody() {
+                            if (bytes.length == 0){
+                                return null;
+                            }
                             return bodyFlux;
                         }
 
