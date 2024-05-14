@@ -11,6 +11,7 @@ import org.springframework.core.Ordered;
 import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.core.io.buffer.DataBufferUtils;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpRequestDecorator;
 import org.springframework.lang.NonNull;
@@ -69,12 +70,13 @@ public class BodyDecryptGlobalFilter implements GlobalFilter, Ordered {
                         return Mono.just(buffer);
                     });
 
+                    if (request.getMethod() == HttpMethod.GET) {
+                        return chain.filter(exchange);
+                    }
+
                     ServerHttpRequest mutatedRequest = new ServerHttpRequestDecorator(request) {
                         @Override
                         public Flux<DataBuffer> getBody() {
-                            if (bytes.length == 0){
-                                return null;
-                            }
                             return bodyFlux;
                         }
 
