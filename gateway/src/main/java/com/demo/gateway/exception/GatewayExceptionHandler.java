@@ -1,5 +1,6 @@
 package com.demo.gateway.exception;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import org.springframework.boot.web.reactive.error.ErrorWebExceptionHandler;
 import org.springframework.http.HttpStatus;
@@ -55,8 +56,9 @@ public class GatewayExceptionHandler extends AbstractExceptionHandler implements
 
     @Override
     public Mono<Void> handle(ServerWebExchange exchange, Throwable ex) {
-        System.out.println(ex.getMessage());
+
         JSONObject errorInfo = super.buildErrorMap(ex);
+        System.out.println(JSON.toJSONString(errorInfo));
         if (exchange.getResponse().isCommitted()) {
             return Mono.error(ex);
         }
