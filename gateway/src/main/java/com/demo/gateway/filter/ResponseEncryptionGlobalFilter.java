@@ -31,8 +31,8 @@ import java.nio.charset.StandardCharsets;
  * @since 0.0.1
  */
 
-@Configuration
-@Component
+//@Configuration
+//@Component
 public class ResponseEncryptionGlobalFilter implements GlobalFilter, Ordered {
     private static final String AES_SECURTY = "MTIzNDU2Nzg5MTIzNDU2Nw==";//1234567891234567
     private static final Logger log = LogManager.getLogger();
