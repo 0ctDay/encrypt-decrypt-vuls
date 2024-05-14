@@ -1,10 +1,12 @@
 package com.demo.gateway.filter;
 
 
+import com.demo.gateway.utils.AESUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
 import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.core.io.buffer.DataBufferUtils;
@@ -19,6 +21,7 @@ import reactor.core.publisher.Mono;
 import java.io.IOException;
 import java.util.Map;
 
+
 /**
  * 请求体 Body 解密 过滤器
  *
@@ -27,7 +30,8 @@ import java.util.Map;
  * @see <a href="https://stackoverflow.com/questions/66822340/spring-webflux-security-and-request-body">spring-webflux-security-and-request-body</a>
  * @since 0.0.1
  */
-//@Component
+@Component
+@Configuration
 public class BodyDecryptGlobalFilter implements GlobalFilter, Ordered {
 
     @Override
@@ -58,15 +62,9 @@ public class BodyDecryptGlobalFilter implements GlobalFilter, Ordered {
                             byte[] decrypt;
 
                             try {
+                                decrypt = AESUtil.encrypt(new String(bytes)).getBytes();
 
-                                @SuppressWarnings("unchecked")
-                                Map<String, Object> map = objectMapper.readValue(bytes, Map.class);
-
-                                map.put("test", "数据已解密（仅演示，解密方式，自己实现）");
-
-                                decrypt = objectMapper.writeValueAsBytes(map);
-
-                            } catch (IOException e) {
+                            } catch (Exception e) {
                                 decrypt = bytes;
                                 System.out.println("数据类型不是 JSON，不解密" + e);
                             }

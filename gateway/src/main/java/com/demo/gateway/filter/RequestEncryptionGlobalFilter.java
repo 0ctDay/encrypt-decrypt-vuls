@@ -48,7 +48,7 @@ import java.util.concurrent.TimeUnit;
 @Component
 public class RequestEncryptionGlobalFilter implements GlobalFilter, Ordered {
 
-    private static final String AES_SECURTY = "MTIzNDU2Nzg5MTIzNDU2Nw==";
+    public static final String AES_SECURTY = "MTIzNDU2Nzg5MTIzNDU2Nw==";
     @Autowired
     private RedisTemplate<String, String> redisTemplate;
 

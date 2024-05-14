@@ -7,6 +7,9 @@ import java.util.Base64;
 
 public class AESUtil {
     static String base64EncodedIV = "MTIzNDU2Nzg5MTIzNDU2Nw==";  //1234567891234567
+    public static String decrypt(String encryptedText){
+        return decrypt(encryptedText, "MTIzNDU2Nzg5MTIzNDU2Nw==");
+    }
     public static String decrypt(String encryptedText, String base64EncodedKey) {
         try {
             // 解码密钥
@@ -28,6 +31,9 @@ public class AESUtil {
             e.printStackTrace();
             return null;
         }
+    }
+    public static String encrypt(String plainText){
+        return encrypt(plainText, "MTIzNDU2Nzg5MTIzNDU2Nw==");
     }
     public static String encrypt(String plainText, String base64EncodedKey) {
         try {

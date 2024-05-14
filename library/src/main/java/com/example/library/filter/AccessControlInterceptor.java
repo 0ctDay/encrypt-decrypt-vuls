@@ -10,6 +10,7 @@ import org.springframework.web.servlet.HandlerInterceptor;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Enumeration;
 
 public class AccessControlInterceptor implements HandlerInterceptor {
     @Autowired
@@ -17,10 +18,8 @@ public class AccessControlInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
             throws Exception {
-        if ( "OPTIONS".equals(request.getMethod())){
-            System.out.println("接收到了OPTIONS");
-            return true;
-        }
+        String header = request.getHeader("content-length");
+        System.out.println(header);
         // 获取请求中的所有 Cookie
         try {
             String token = request.getHeader("token");
