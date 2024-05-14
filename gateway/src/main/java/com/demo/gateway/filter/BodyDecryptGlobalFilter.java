@@ -46,51 +46,52 @@ public class BodyDecryptGlobalFilter implements GlobalFilter, Ordered {
 
         ServerHttpRequest request = exchange.getRequest();
 
-        if(request.getMethod().equals("POST")) {
-            return DataBufferUtils.join(request.getBody())
-                    .flatMap(dataBuffer -> {
-                        byte[] bytes = new byte[dataBuffer.readableByteCount()];
-                        dataBuffer.read(bytes);
-                        DataBufferUtils.release(dataBuffer);
 
-                        String bodyString = new String(bytes);
+        return DataBufferUtils.join(request.getBody())
+                .flatMap(dataBuffer -> {
+                    byte[] bytes = new byte[dataBuffer.readableByteCount()];
+                    dataBuffer.read(bytes);
+                    DataBufferUtils.release(dataBuffer);
 
-                        // 这里可以对bodyString进行任何你需要的操作，比如日志记录或修改内容
-                        System.out.println("请求解密前: " + bodyString);
+                    if ("GET".equals(request.getMethod())) {
+                        return chain.filter(exchange);
+                    }
 
-                        String decrypt = AESUtil.decrypt(bodyString);
+                    String bodyString = new String(bytes);
+                    // 这里可以对bodyString进行任何你需要的操作，比如日志记录或修改内容
+                    System.out.println("请求解密前: " + bodyString);
+
+                    String decrypt = AESUtil.decrypt(bodyString);
 
 
-                        // 重新创建一个新的请求对象
-                        Flux<DataBuffer> bodyFlux = Flux.defer(() -> {
-                            DataBuffer buffer = exchange.getResponse().bufferFactory().wrap(decrypt.getBytes());
-                            System.out.println("请求解密后: " + decrypt);
-                            return Mono.just(buffer);
-                        });
-
-                        ServerHttpRequest mutatedRequest = new ServerHttpRequestDecorator(request) {
-                            @Override
-                            public Flux<DataBuffer> getBody() {
-                                return bodyFlux;
-                            }
-
-                            @NonNull
-                            @Override
-                            public HttpHeaders getHeaders() {
-                                HttpHeaders headers = new HttpHeaders();
-                                headers.addAll(super.getHeaders());
-                                headers.remove(HttpHeaders.CONTENT_LENGTH);
-                                headers.setContentLength(bytes.length);
-                                return headers;
-                            }
-                        };
-
-                        return chain.filter(exchange.mutate().request(mutatedRequest).build());
+                    // 重新创建一个新的请求对象
+                    Flux<DataBuffer> bodyFlux = Flux.defer(() -> {
+                        DataBuffer buffer = exchange.getResponse().bufferFactory().wrap(decrypt.getBytes());
+                        System.out.println("请求解密后: " + decrypt);
+                        return Mono.just(buffer);
                     });
-        }
-        else{
-            return chain.filter(exchange);
-        }
+
+                    ServerHttpRequest mutatedRequest = new ServerHttpRequestDecorator(request) {
+                        @Override
+                        public Flux<DataBuffer> getBody() {
+                            return bodyFlux;
+                        }
+
+                        @NonNull
+                        @Override
+                        public HttpHeaders getHeaders() {
+                            HttpHeaders headers = new HttpHeaders();
+                            headers.addAll(super.getHeaders());
+                            headers.remove(HttpHeaders.CONTENT_LENGTH);
+                            headers.setContentLength(bytes.length);
+                            return headers;
+                        }
+                    };
+
+                    return chain.filter(exchange.mutate().request(mutatedRequest).build());
+                });
+
+
     }
 
 }
