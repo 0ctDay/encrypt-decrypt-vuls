@@ -55,6 +55,7 @@ public class GatewayExceptionHandler extends AbstractExceptionHandler implements
 
     @Override
     public Mono<Void> handle(ServerWebExchange exchange, Throwable ex) {
+        System.out.println(ex.getMessage());
         JSONObject errorInfo = super.buildErrorMap(ex);
         if (exchange.getResponse().isCommitted()) {
             return Mono.error(ex);
