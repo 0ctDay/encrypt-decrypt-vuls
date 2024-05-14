@@ -62,7 +62,7 @@ public class BodyDecryptGlobalFilter implements GlobalFilter, Ordered {
                             byte[] decrypt;
 
                             try {
-                                decrypt = AESUtil.encrypt(new String(bytes)).getBytes();
+                                decrypt = AESUtil.decrypt(new String(bytes)).getBytes();
 
                             } catch (Exception e) {
                                 decrypt = bytes;
