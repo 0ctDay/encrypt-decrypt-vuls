@@ -88,7 +88,9 @@ public class BodyDecryptGlobalFilter implements GlobalFilter, Ordered {
                         return chain.filter(exchange.mutate().request(mutatedRequest).build());
                     });
         }
-        return chain.filter(exchange);
+        else{
+            return chain.filter(exchange);
+        }
     }
 
 }
