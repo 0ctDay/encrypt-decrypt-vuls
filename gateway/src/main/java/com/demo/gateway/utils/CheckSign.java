@@ -36,7 +36,7 @@ public class CheckSign {
         //3 获取签名
         String sign = getSign(exchange.getRequest().getHeaders());
         //4 获取URL参数
-
+        System.out.println("验证签名, 请求参数为"+JSON.toJSONString(paramMap));
         checkSign(sign, dateTimestamp, requestId, paramMap);
         //5 获取请求体参数
         return true;

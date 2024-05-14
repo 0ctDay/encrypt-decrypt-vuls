@@ -21,11 +21,7 @@ public class AccessControlInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
             throws Exception {
-        if(request.getMethod().equals("GET")){
-            System.out.println("get请求"+request.getRequestURI());
-        }
-        String header = request.getHeader("content-length");
-        System.out.println("请求长度:  "+header);
+
 
         // 获取请求中的所有 Cookie
         try {
