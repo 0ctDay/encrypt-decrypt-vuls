@@ -47,6 +47,9 @@ public class BodyDecryptGlobalFilter implements GlobalFilter, Ordered {
 
         ServerHttpRequest request = exchange.getRequest();
 
+        if (request.getMethod() == HttpMethod.GET) {
+            return chain.filter(exchange);
+        }
 
         return DataBufferUtils.join(request.getBody())
                 .flatMap(dataBuffer -> {
@@ -70,9 +73,7 @@ public class BodyDecryptGlobalFilter implements GlobalFilter, Ordered {
                         return Mono.just(buffer);
                     });
 
-                    if (request.getMethod() == HttpMethod.GET) {
-                        return chain.filter(exchange);
-                    }
+
 
                     ServerHttpRequest mutatedRequest = new ServerHttpRequestDecorator(request) {
                         @Override
