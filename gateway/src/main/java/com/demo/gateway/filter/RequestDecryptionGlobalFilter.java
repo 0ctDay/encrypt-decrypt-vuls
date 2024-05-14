@@ -3,7 +3,6 @@ package com.demo.gateway.filter;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.nacos.common.utils.Md5Utils;
-import com.demo.gateway.annotations.LoggableGlobalFilter;
 import com.demo.gateway.config.FilterUtils;
 import com.demo.gateway.pojo.MyCachedBodyOutputMessage;
 import com.demo.gateway.utils.AESUtil;
@@ -44,9 +43,9 @@ import java.util.concurrent.TimeUnit;
  * @Author: rosh
  * @Date: 2021/10/26 22:24
  */
-@Configuration
-@Component
-public class RequestEncryptionGlobalFilter implements GlobalFilter, Ordered {
+//@Configuration
+//@Component
+public class RequestDecryptionGlobalFilter implements GlobalFilter, Ordered {
 
     public static final String AES_SECURTY = "MTIzNDU2Nzg5MTIzNDU2Nw==";
     @Autowired

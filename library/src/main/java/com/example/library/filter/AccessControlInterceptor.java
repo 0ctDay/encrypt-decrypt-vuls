@@ -9,8 +9,11 @@ import org.springframework.web.servlet.HandlerInterceptor;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.Enumeration;
+import java.util.stream.Collectors;
 
 public class AccessControlInterceptor implements HandlerInterceptor {
     @Autowired
@@ -18,8 +21,18 @@ public class AccessControlInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
             throws Exception {
+
         String header = request.getHeader("content-length");
-        System.out.println(header);
+        System.out.println("请求长度:  "+header);
+        StringBuilder stringBuilder = new StringBuilder();
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(request.getInputStream()))) {
+            stringBuilder.append(reader.lines().collect(Collectors.joining(System.lineSeparator())));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        System.out.println("请求内容:  "+ stringBuilder);
+
+
         // 获取请求中的所有 Cookie
         try {
             String token = request.getHeader("token");
