@@ -24,14 +24,6 @@ public class AccessControlInterceptor implements HandlerInterceptor {
 
         String header = request.getHeader("content-length");
         System.out.println("请求长度:  "+header);
-        StringBuilder stringBuilder = new StringBuilder();
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(request.getInputStream()))) {
-            stringBuilder.append(reader.lines().collect(Collectors.joining(System.lineSeparator())));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        System.out.println("请求内容:  "+ stringBuilder);
-
 
         // 获取请求中的所有 Cookie
         try {

@@ -83,7 +83,7 @@ public class BodyDecryptGlobalFilter implements GlobalFilter, Ordered {
                             HttpHeaders headers = new HttpHeaders();
                             headers.addAll(super.getHeaders());
                             headers.remove(HttpHeaders.CONTENT_LENGTH);
-                            headers.setContentLength(bytes.length);
+                            headers.setContentLength(decrypt.length());
                             return headers;
                         }
                     };
