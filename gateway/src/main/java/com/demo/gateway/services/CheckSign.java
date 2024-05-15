@@ -1,4 +1,4 @@
-package com.demo.gateway.utils;
+package com.demo.gateway.services;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.nacos.common.utils.Md5Utils;
@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.server.reactive.ServerHttpRequest;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
@@ -18,32 +20,31 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.concurrent.TimeUnit;
 
+@Service
 public class CheckSign {
     private static final String ERROR_MESSAGE = "拒绝服务";
     private static final String SIGN_ERROR_MESSAGE = "签名过期";
     public Map<String, Object> paramMap;
-    public CheckSign(Map map){
-        this.paramMap = map;
-    }
     @Autowired
     private RedisTemplate<String, String> redisTemplate;
-    public boolean Sign(ServerWebExchange exchange){
+    public void Sign(ServerHttpRequest request){
 
         //1 获取时间戳
-        Long dateTimestamp = getDateTimestamp(exchange.getRequest().getHeaders());
+        Long dateTimestamp = getDateTimestamp(request.getHeaders());
         //2 获取RequestId
-        String requestId = getRequestId(exchange.getRequest().getHeaders());
+        String requestId = getRequestId(request.getHeaders());
         //3 获取签名
-        String sign = getSign(exchange.getRequest().getHeaders());
+        String sign = getSign(request.getHeaders());
         //4 获取URL参数
         System.out.println("验证签名, 请求参数为"+JSON.toJSONString(paramMap));
+
         checkSign(sign, dateTimestamp, requestId, paramMap);
-        //5 获取请求体参数
-        return true;
+
     }
 
     public void checkSign(String sign, Long dateTimestamp, String requestId, Map<String, Object> paramMap) {
         String str = JSON.toJSONString(paramMap) + requestId + dateTimestamp;
+        System.out.println(str);
         String tempSign = Md5Utils.getMD5(str.getBytes());
         if (!tempSign.equals(sign)) {
             throw new IllegalArgumentException(SIGN_ERROR_MESSAGE);

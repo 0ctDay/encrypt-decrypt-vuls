@@ -33,7 +33,7 @@ import java.nio.charset.StandardCharsets;
 
 @Configuration
 @Component
-public class ResponseEncryptionGlobalFilter implements GlobalFilter, Ordered {
+public class ResponseEncryptionFilter implements GlobalFilter, Ordered {
     private static final String AES_SECURTY = "MTIzNDU2Nzg5MTIzNDU2Nw==";//1234567891234567
     private static final Logger log = LogManager.getLogger();
     /**

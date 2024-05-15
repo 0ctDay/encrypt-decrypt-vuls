@@ -1,19 +1,18 @@
 package com.example.library.filter;
+
 import com.auth0.jwt.JWT;
 import com.example.library.commom.Result;
 import com.example.library.entity.User;
-import com.fasterxml.jackson.core.JsonProcessingException;
+import com.example.library.utils.TokenUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.servlet.HandlerInterceptor;
 
+import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.Enumeration;
-import java.util.stream.Collectors;
 
 public class AccessControlInterceptor implements HandlerInterceptor {
     @Autowired
@@ -21,12 +20,17 @@ public class AccessControlInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
             throws Exception {
-
+//        HttpServletRequest httpServletRequest =  request;
+//        CachedBodyHttpServletRequest cachedBodyHttpServletRequest = new CachedBodyHttpServletRequest(httpServletRequest);
+//
+//        String body = new String(toByteArray(cachedBodyHttpServletRequest.getInputStream()), StandardCharsets.UTF_8);
+//        System.out.println("content-length: "+ request.getHeader("content-length"));
+//        System.out.println("Request Body: " + body); // 打印请求体日志
 
         // 获取请求中的所有 Cookie
         try {
             String token = request.getHeader("token");
-            String aud = JWT.decode(token).getAudience().get(0);
+            String aud = TokenUtils.checkToken(token).getAudience().get(0);
             Integer userId = Integer.valueOf(aud);
 
             if (userId != null) {
@@ -52,5 +56,15 @@ public class AccessControlInterceptor implements HandlerInterceptor {
         // 将 ErrorResult 对象转换为 JSON 格式
         String jsonResponse = mapper.writeValueAsString(Result.noAuth());
         response.getWriter().println(jsonResponse);
+    }
+
+    private static byte[] toByteArray(ServletInputStream input) throws IOException {
+        byte[] buffer = new byte[1024];
+        int bytesRead;
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        while ((bytesRead = input.read(buffer)) != -1) {
+            output.write(buffer, 0, bytesRead);
+        }
+        return output.toByteArray();
     }
 }

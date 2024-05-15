@@ -17,9 +17,9 @@ import java.util.List;
 @Configuration
 public class GatewayExceptionConfig {
 
-//    @Primary
-//    @Bean
-//    @Order(Ordered.HIGHEST_PRECEDENCE)
+    @Primary
+    @Bean
+    @Order(Ordered.HIGHEST_PRECEDENCE)
     public ErrorWebExceptionHandler errorWebExceptionHandler(ObjectProvider<List<ViewResolver>> viewResolversProvider,
                                                              ServerCodecConfigurer serverCodecConfigurer) {
         GatewayExceptionHandler gatewayExceptionHandler = new GatewayExceptionHandler();

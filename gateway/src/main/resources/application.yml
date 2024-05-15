@@ -1,5 +1,5 @@
 server:
-  port: 8080
+  port: 8081
 
 spring:
   application:
@@ -20,7 +20,7 @@ spring:
 #            - RewritePath=/api/(?<segment>.*),/$\{segment}
   redis:
     port: 6379
-    host: ${REDIS_HOST:localhost}
+    host: redis
 
 
 #rootLogger:

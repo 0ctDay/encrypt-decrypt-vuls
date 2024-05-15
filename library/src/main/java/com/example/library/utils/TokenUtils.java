@@ -2,6 +2,8 @@ package com.example.library.utils;
 
 import cn.hutool.core.date.DateUtil;
 
+import com.auth0.jwt.JWTVerifier;
+import com.auth0.jwt.interfaces.DecodedJWT;
 import com.example.library.entity.User;
 import com.example.library.mapper.UserMapper;
 import lombok.extern.slf4j.Slf4j;
@@ -23,7 +25,7 @@ public class TokenUtils {
     @Autowired
     @Resource
     private UserMapper userMapper;
-
+    private static String JWT_KEY = "aaabbbccc";
     private static UserMapper staticUserMapper;
 
     @PostConstruct
@@ -38,7 +40,7 @@ public class TokenUtils {
      */
     public static String genToken(User user) {
         return JWT.create().withExpiresAt(DateUtil.offsetDay(new Date(), 1)).withAudience(user.getId().toString())
-                .sign(Algorithm.HMAC256(user.getPassword()));
+                .sign(Algorithm.HMAC256(JWT_KEY));
     }
 
     /**
@@ -49,12 +51,19 @@ public class TokenUtils {
         try {
             HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
             String token = request.getHeader("token");
-            String aud = JWT.decode(token).getAudience().get(0);
+            String aud = checkToken(token).getAudience().get(0);
             Integer userId = Integer.valueOf(aud);
             return staticUserMapper.selectById(userId);
         } catch (Exception e) {
             log.error("解析token失败", e);
             return null;
         }
+    }
+
+    public static DecodedJWT checkToken(String token) throws Exception {
+        JWTVerifier verifier = JWT.require(Algorithm.HMAC256(JWT_KEY)).build();
+        return verifier.verify(token);
+
+
     }
 }

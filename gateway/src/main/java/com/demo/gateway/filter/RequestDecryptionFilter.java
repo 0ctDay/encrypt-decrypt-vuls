@@ -5,8 +5,9 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.demo.gateway.config.FilterUtils;
 import com.demo.gateway.utils.AESUtil;
-import com.demo.gateway.utils.CheckSign;
+import com.demo.gateway.services.CheckSign;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.context.annotation.Configuration;
@@ -38,8 +39,10 @@ import java.util.TreeMap;
  */
 @Component
 @Configuration
-public class BodyDecryptGlobalFilter implements GlobalFilter, Ordered {
+public class RequestDecryptionFilter implements GlobalFilter, Ordered {
 
+    @Autowired
+    private CheckSign checkSign;
     @Override
     public int getOrder() {
         return 10;
@@ -50,19 +53,16 @@ public class BodyDecryptGlobalFilter implements GlobalFilter, Ordered {
 
         ServerHttpRequest request = exchange.getRequest();
 
-        CheckSign sign;
         //获取请求参数
         try {
-            sign = new CheckSign(updateRequestParam(exchange));
+            checkSign.paramMap = updateRequestParam(request);
         } catch (Exception e) {
             return FilterUtils.invalidUrl(exchange);
         }
         //处理GET请求
         if (request.getMethod() == HttpMethod.GET) {
             //验证签名
-            if(!sign.Sign(exchange)){
-                return FilterUtils.invalidUrl(exchange);
-            }
+            checkSign.Sign(request);
             return chain.filter(exchange);
         }
 
@@ -84,17 +84,18 @@ public class BodyDecryptGlobalFilter implements GlobalFilter, Ordered {
                     // 重新创建一个新的请求对象
                     Flux<DataBuffer> bodyFlux = Flux.defer(() -> {
                         DataBuffer buffer = exchange.getResponse().bufferFactory().wrap(decrypt.getBytes());
-                        System.out.println("请求解密后: " + decrypt);
+                        System.out.println("请求解密后: " + decrypt+"长度为: "+decrypt.length());
                         return Mono.just(buffer);
                     });
 
                     JSONObject jsonObject = JSON.parseObject(decrypt);
                     for (Map.Entry<String, Object> entry : jsonObject.entrySet()) {
-                        sign.paramMap.put(entry.getKey(), entry.getValue());
+                        checkSign.paramMap.put(entry.getKey(), entry.getValue());
                     }
-                    if(!sign.Sign(exchange)){
-                        return FilterUtils.invalidUrl(exchange);
-                    }
+
+                    checkSign.Sign(request);
+
+
 
                     ServerHttpRequest mutatedRequest = new ServerHttpRequestDecorator(request) {
                         @Override
@@ -108,7 +109,7 @@ public class BodyDecryptGlobalFilter implements GlobalFilter, Ordered {
                             HttpHeaders headers = new HttpHeaders();
                             headers.addAll(super.getHeaders());
                             headers.remove(HttpHeaders.CONTENT_LENGTH);
-                            headers.setContentLength(decrypt.length());
+                            headers.setContentLength(decrypt.getBytes().length);
                             return headers;
                         }
                     };
@@ -118,8 +119,7 @@ public class BodyDecryptGlobalFilter implements GlobalFilter, Ordered {
 
 
     }
-    private Map<String, Object> updateRequestParam(ServerWebExchange exchange) throws NoSuchFieldException, IllegalAccessException {
-        ServerHttpRequest request = exchange.getRequest();
+    private Map<String, Object> updateRequestParam(ServerHttpRequest request) throws NoSuchFieldException, IllegalAccessException {
         URI uri = request.getURI();
         String query = uri.getQuery();
         if (StringUtils.isNotBlank(query) && query.contains("param")) {

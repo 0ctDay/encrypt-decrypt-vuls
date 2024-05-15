@@ -59,8 +59,6 @@ public class RequestDecryptionGlobalFilter implements GlobalFilter, Ordered {
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
-        //拦截OPTIONS请求
-        System.out.println("1. 获取请求头");
         //1 获取时间戳
         Long dateTimestamp = getDateTimestamp(exchange.getRequest().getHeaders());
         //2 获取RequestId
@@ -85,7 +83,6 @@ public class RequestDecryptionGlobalFilter implements GlobalFilter, Ordered {
         } catch (Exception e) {
             return FilterUtils.invalidUrl(exchange);
         }
-        System.out.println("2. 获取请求参数: "+ JSON.toJSON(paramMap));
         //6 获取请求体,修改请求体
         ServerRequest serverRequest = ServerRequest.create(exchange, HandlerStrategies.withDefaults().messageReaders());
         Mono<String> modifiedBody = serverRequest.bodyToMono(String.class).flatMap(body -> {
@@ -95,7 +92,6 @@ public class RequestDecryptionGlobalFilter implements GlobalFilter, Ordered {
                 paramMap.put(entry.getKey(), entry.getValue());
             }
             checkSign(sign, dateTimestamp, requestId, paramMap);
-            System.out.println("3. 修改请求体:"+encrypt);
             return Mono.just(encrypt);
         });
 
