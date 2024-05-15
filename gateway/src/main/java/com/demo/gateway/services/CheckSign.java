@@ -1,8 +1,9 @@
 package com.demo.gateway.services;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.nacos.common.utils.Md5Utils;
+
 import com.demo.gateway.config.FilterUtils;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -45,7 +46,7 @@ public class CheckSign {
     public void checkSign(String sign, Long dateTimestamp, String requestId, Map<String, Object> paramMap) {
         String str = JSON.toJSONString(paramMap) + requestId + dateTimestamp;
         System.out.println(str);
-        String tempSign = Md5Utils.getMD5(str.getBytes());
+        String tempSign = DigestUtils.md5Hex(str);
         if (!tempSign.equals(sign)) {
             throw new IllegalArgumentException(SIGN_ERROR_MESSAGE);
         }
