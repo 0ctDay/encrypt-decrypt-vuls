@@ -33,7 +33,7 @@ services:
     networks:
       - mynetwork
     ports:
-      - "9200:8080"
+      - "9200:8082"
     depends_on:
       - nacos
       - mysql
@@ -52,12 +52,19 @@ services:
       networks:
         - mynetwork
       ports:
-        - "9100:8080"
+        - "9100:8081"
       depends_on:
         - nacos
         - mysql
         - redis
-
+        -
+  web:
+    image: nginx:latest
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+      - ./nginx/html:/var/www/html
 
 networks:
   mynetwork:
