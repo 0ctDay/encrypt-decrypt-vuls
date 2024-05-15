@@ -14,12 +14,7 @@ services:
     networks:
       - mynetwork
 
-  nacos:
-    image: nacos/nacos-server:2.0.2
-    networks:
-      - mynetwork
-    environment:
-      MODE: "standalone"
+
 
   library:
     image: library-service
@@ -33,7 +28,6 @@ services:
     ports:
       - "9200:8082"
     depends_on:
-      - nacos
       - mysql
       - redis
 
@@ -52,7 +46,6 @@ services:
       ports:
         - "9100:8081"
       depends_on:
-        - nacos
         - mysql
         - redis
 
