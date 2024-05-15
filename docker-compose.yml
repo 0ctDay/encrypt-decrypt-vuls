@@ -65,6 +65,9 @@ services:
       - ./vue/html1:/var/www/html
     networks:
       - mynetwork
-      -
+    depends_on:
+      - library
+      - gateway
+
 networks:
   mynetwork:
