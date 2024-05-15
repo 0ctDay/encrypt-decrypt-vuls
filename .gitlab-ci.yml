@@ -2,8 +2,6 @@ stages:
   - build
   - deploy
 
-
-
 build:
   stage: build
   script:
