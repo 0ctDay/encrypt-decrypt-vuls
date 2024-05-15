@@ -20,12 +20,6 @@ public class AccessControlInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
             throws Exception {
-//        HttpServletRequest httpServletRequest =  request;
-//        CachedBodyHttpServletRequest cachedBodyHttpServletRequest = new CachedBodyHttpServletRequest(httpServletRequest);
-//
-//        String body = new String(toByteArray(cachedBodyHttpServletRequest.getInputStream()), StandardCharsets.UTF_8);
-//        System.out.println("content-length: "+ request.getHeader("content-length"));
-//        System.out.println("Request Body: " + body); // 打印请求体日志
 
         // 获取请求中的所有 Cookie
         try {
