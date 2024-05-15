@@ -11,7 +11,7 @@ spring:
     gateway:
       routes:
         - id: demo-one
-          uri: lb://library-service
+          uri: http://139.224.188.165:8848
           predicates:
             - Path=/**
 #          predicates:
