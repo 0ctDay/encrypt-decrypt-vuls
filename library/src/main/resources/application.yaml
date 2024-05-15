@@ -12,8 +12,5 @@ spring:
   application:
     name: library-service
 
-  cloud:
-    nacos:
-      discovery:
-        server-addr: nacos:8848
+
 

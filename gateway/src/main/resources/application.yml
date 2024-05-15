@@ -4,14 +4,10 @@ server:
 spring:
   application:
     name: gateway-service
-  cloud:
-    nacos:
-      discovery:
-        server-addr: nacos:8848
     gateway:
       routes:
         - id: demo-one
-          uri: lb://library-service
+          uri: http://library:8082
           predicates:
             - Path=/**
 #          predicates:
