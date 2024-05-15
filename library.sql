@@ -168,7 +168,7 @@ CREATE TABLE `user`  (
 -- ----------------------------
 -- Records of user
 -- ----------------------------
-INSERT INTO `user` VALUES (5, 'admin', 'admin!@#45', 'admin', '18672191141', '男', '武汉', 1);
+INSERT INTO `user` VALUES (5, 'adminsc', 'admin!@#45', 'admin', '18672191141', '男', '武汉', 1);
 INSERT INTO `user` VALUES (6, 'whalwl', 'asdsadsadsdsazxc', 'flag{1234}', '1', '男', '北京', 1);
 INSERT INTO `user` VALUES (7, 'asd', '123123', '123', '13207817112', NULL, '123', 2);
 
