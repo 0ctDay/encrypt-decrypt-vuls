@@ -62,7 +62,7 @@ services:
       - "80:80"
     volumes:
       - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
-      - ./vue/html:/var/www/html
+      - ./vue/html1:/var/www/html
 
 networks:
   mynetwork:
