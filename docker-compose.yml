@@ -63,6 +63,8 @@ services:
     volumes:
       - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
       - ./vue/html1:/var/www/html
-
+    networks:
+      - mynetwork
+      -
 networks:
   mynetwork:
