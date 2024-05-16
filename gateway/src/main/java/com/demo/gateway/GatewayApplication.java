@@ -10,7 +10,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * @Date: 2021/10/24 23:34
  */
 @SpringBootApplication
-
 public class GatewayApplication {
 
     public static void main(String[] args) {

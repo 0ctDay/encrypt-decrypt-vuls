@@ -1,11 +1,8 @@
 package com.demo.gateway.filter;
 
-import com.demo.gateway.annotations.LoggableGlobalFilter;
 import com.demo.gateway.utils.AESUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.reactivestreams.Publisher;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
@@ -34,8 +31,8 @@ import java.nio.charset.StandardCharsets;
 @Configuration
 @Component
 public class ResponseEncryptionFilter implements GlobalFilter, Ordered {
+
     private static final String AES_SECURTY = "MTIzNDU2Nzg5MTIzNDU2Nw==";//1234567891234567
-    private static final Logger log = LogManager.getLogger();
     /**
      * 加密 过滤器 优先级
      * <p>
@@ -48,7 +45,6 @@ public class ResponseEncryptionFilter implements GlobalFilter, Ordered {
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
-        System.out.println("触发");
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
 
@@ -66,7 +62,7 @@ public class ResponseEncryptionFilter implements GlobalFilter, Ordered {
                             join.read(bytes);
                             DataBufferUtils.release(join);
 
-                            System.out.println("加密前 body："+ new String(bytes));
+                            System.out.println("响应加密前："+ new String(bytes));
 
                             byte[] encryption;
 
@@ -77,10 +73,10 @@ public class ResponseEncryptionFilter implements GlobalFilter, Ordered {
 
                             } catch (Exception e) {
                                 encryption = bytes;
-                                log.error("数据类型不是 JSON，不加密", e);
+                                System.out.println("数据类型不是 JSON，不加密"+e);
                             }
 
-                            System.out.println("加密后 body："+ new String(encryption, StandardCharsets.UTF_8));
+                            System.out.println("响应加密后："+ new String(encryption, StandardCharsets.UTF_8));
                             HttpHeaders headers = getDelegate().getHeaders();
                             headers.setContentLength(encryption.length);
                             return exchange.getResponse().bufferFactory().wrap(encryption);

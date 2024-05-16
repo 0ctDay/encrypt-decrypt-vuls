@@ -2,7 +2,7 @@ server:
   port: 8081
 
 spring:
-  application:
+  cloud:
     name: gateway-service
     gateway:
       routes:
@@ -18,17 +18,3 @@ spring:
     port: 6379
     host: redis
 
-
-#rootLogger:
-#  level: DEBUG
-#  appenders:
-#    - console
-#
-## 配置控制台输出
-#appenders:
-#  - type: console
-#    name: CONSOLE
-#    target: System.out
-#    layout:
-#      type: pattern
-#      pattern: "%d{yyyy-MM-dd HH:mm:ss} %-5p %c{1}:%L - %m%n"

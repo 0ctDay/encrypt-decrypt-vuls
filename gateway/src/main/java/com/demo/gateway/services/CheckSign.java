@@ -1,24 +1,17 @@
 package com.demo.gateway.services;
 
 import com.alibaba.fastjson.JSON;
-
-import com.demo.gateway.config.FilterUtils;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.server.reactive.ServerHttpRequest;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
-import org.springframework.web.server.ServerWebExchange;
-import reactor.core.publisher.Mono;
 
-import java.net.URI;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 import java.util.concurrent.TimeUnit;
 
 @Service
@@ -37,14 +30,13 @@ public class CheckSign {
         //3 获取签名
         String sign = getSign(request.getHeaders());
         //4 获取URL参数
-        System.out.println("验证签名, 请求参数为"+JSON.toJSONString(paramMap));
-
         checkSign(sign, dateTimestamp, requestId, paramMap);
 
     }
 
     public void checkSign(String sign, Long dateTimestamp, String requestId, Map<String, Object> paramMap) {
         String str = JSON.toJSONString(paramMap) + requestId + dateTimestamp;
+        //打印签名
         System.out.println(str);
         String tempSign = DigestUtils.md5Hex(str);
         if (!tempSign.equals(sign)) {

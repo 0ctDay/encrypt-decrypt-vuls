@@ -21,33 +21,21 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-
-
 public class GatewayExceptionHandler extends AbstractExceptionHandler implements ErrorWebExceptionHandler {
 
-
     private List<HttpMessageReader<?>> messageReaders = Collections.emptyList();
-
-
     private List<HttpMessageWriter<?>> messageWriters = Collections.emptyList();
-
-
     private List<ViewResolver> viewResolvers = Collections.emptyList();
-
-
     private ThreadLocal<JSONObject> exceptionHandlerResult = new ThreadLocal<>();
-
 
     public void setMessageReaders(List<HttpMessageReader<?>> messageReaders) {
         Assert.notNull(messageReaders, "'messageReaders' must not be null");
         this.messageReaders = messageReaders;
     }
 
-
     public void setViewResolvers(List<ViewResolver> viewResolvers) {
         this.viewResolvers = viewResolvers;
     }
-
 
     public void setMessageWriters(List<HttpMessageWriter<?>> messageWriters) {
         Assert.notNull(messageWriters, "'messageWriters' must not be null");
@@ -56,9 +44,9 @@ public class GatewayExceptionHandler extends AbstractExceptionHandler implements
 
     @Override
     public Mono<Void> handle(ServerWebExchange exchange, Throwable ex) {
-
         JSONObject errorInfo = super.buildErrorMap(ex);
-        System.out.println(JSON.toJSONString(errorInfo));
+        printErrorInfoToConsole(errorInfo, ex);
+
         if (exchange.getResponse().isCommitted()) {
             return Mono.error(ex);
         }
@@ -68,9 +56,17 @@ public class GatewayExceptionHandler extends AbstractExceptionHandler implements
                 .switchIfEmpty(Mono.error(ex))
                 .flatMap(handler -> handler.handle(newRequest))
                 .flatMap(response -> write(exchange, response));
-
     }
 
+    private void printErrorInfoToConsole(JSONObject errorInfo, Throwable ex) {
+        System.out.println("Error Occurred:");
+        System.out.println("---------------");
+        System.out.println("Message: " + errorInfo.getString("message"));
+        System.out.println("Cause: " + errorInfo.getString("cause"));
+        System.out.println("Status: " + errorInfo.getIntValue("status"));
+        System.out.println("Error: " + errorInfo.getString("error"));
+        ex.printStackTrace();
+    }
 
     protected Mono<ServerResponse> renderErrorResponse(ServerRequest request) {
         Map<String, Object> result = exceptionHandlerResult.get();
@@ -79,15 +75,12 @@ public class GatewayExceptionHandler extends AbstractExceptionHandler implements
                 .body(BodyInserters.fromValue(result));
     }
 
-
-    private Mono<? extends Void> write(ServerWebExchange exchange,
-                                       ServerResponse response) {
+    private Mono<? extends Void> write(ServerWebExchange exchange, ServerResponse response) {
         exchange.getResponse().getHeaders().setContentType(response.headers().getContentType());
         return response.writeTo(exchange, new ResponseContext());
     }
 
     private class ResponseContext implements ServerResponse.Context {
-
         @Override
         public List<HttpMessageWriter<?>> messageWriters() {
             return GatewayExceptionHandler.this.messageWriters;
