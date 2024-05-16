@@ -37,17 +37,13 @@ public class forgetController {
             return Result.error("-1","手机号错误");
         }
         HttpSession session = request.getSession();
-        session.setAttribute("code",1234);
+        session.setAttribute("code","1234");
         System.out.println(session.getAttribute("code"));
         return Result.success("0");
     }
    
     @GetMapping("/checksms")
     public Result<?> checksms(HttpServletRequest request){
-        HttpSession session = request.getSession();
-        String code = (String)session.getAttribute("code");
-        System.out.println(code);
-
         try {
             if ("1234".equals(request.getParameter("code"))) {
                 return Result.success("0");

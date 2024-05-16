@@ -14,8 +14,6 @@
 
 数据库: mysql + redis
 
-注册中心: nacos
-
 网关： nginx
 
 ### 加解密方式:
@@ -57,15 +55,6 @@ mvn clean package
 ### Run:
 
 推荐docker运行
-
-先运行nacos
-
-```
-docker-compose down
-docker-compose up -d nacos
-```
-
-后端
 
 ```
 docker build -t library-service ./library

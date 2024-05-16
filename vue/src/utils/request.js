@@ -5,7 +5,7 @@ import {ElMessage} from "element-plus";
 
 
 const request = axios.create({
-    baseURL: 'http://192.168.202.220:9100',
+    baseURL: 'api/',
     timeout: 5000
 })
 
