@@ -25,14 +25,19 @@
 ##### 后端 :
 
 ​	gateway  ---  utils/AESUtil
+![image](https://github.com/0ctDay/encrypt-decrypt-vuls/assets/100889450/0ce8917d-21ee-4817-9c6f-7781a2822636)
+
 
 ##### 前端
 
 ​	vue  ---  utils/request.js 
+![image](https://github.com/0ctDay/encrypt-decrypt-vuls/assets/100889450/fa870f57-a2cd-49bc-b6ed-f4d7d44cfe64)
 
 ### 示例:
 
+http://39.98.108.20:8085/
 
+![image](https://github.com/0ctDay/encrypt-decrypt-vuls/assets/100889450/6b31806f-b2e0-4228-a848-4ba2887098cf)
 
 
 
