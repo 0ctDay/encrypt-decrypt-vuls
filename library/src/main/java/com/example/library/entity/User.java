@@ -5,7 +5,7 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
-
+import com.fasterxml.jackson.annotation.JsonIgnore;
 @TableName("user")
 @Data
 public class User {
@@ -13,7 +13,10 @@ public class User {
     private Integer id;
     private String username;
     private String nickName;
+
+    @JsonIgnore
     private String password;
+
     private String sex;
     private String address;
     private String phone;

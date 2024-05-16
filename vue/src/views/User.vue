@@ -151,7 +151,7 @@ export default {
           search4: this.search4,
         }
       }).then(res =>{
-        console.log(res)
+
         this.tableData = res.data.records
         this.total = res.data.total
       })
@@ -165,7 +165,7 @@ export default {
 
     handleDelete(id){
       request.delete("user/" + id ).then(res =>{
-        console.log(res)
+
         if(res.code == 0 ){
           ElMessage.success("删除成功")
         }
@@ -183,7 +183,7 @@ export default {
     save(){
       if(this.form.id){
         request.put("/user",this.form).then(res =>{
-          console.log(res)
+
           if(res.code == 0){
             ElMessage({
               message: '更新成功',
@@ -200,7 +200,7 @@ export default {
       }
       else {
         request.post("/user",this.form).then(res =>{
-          console.log(res)
+
           if(res.code == 0){
             ElMessage.success('添加成功')
           }

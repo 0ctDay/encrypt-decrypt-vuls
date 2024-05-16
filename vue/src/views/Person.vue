@@ -54,7 +54,7 @@ export default {
       request.post("/user/info",{ id: JSON.parse(sessionStorage.getItem("user"))["id"] }).then(res=>{
       if(res.code == 0)
       {
-        console.log(res.data)
+
         this.form = res.data
       }
       else
